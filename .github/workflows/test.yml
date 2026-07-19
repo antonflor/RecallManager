@@ -33,7 +33,8 @@ jobs:
       - name: Run PSScriptAnalyzer
         shell: ${{ matrix.shell }}
         run: |
-          $results = Invoke-ScriptAnalyzer -Path . -Recurse -Severity Warning,Error
+          # RecallManager intentionally uses Write-Host for its interactive terminal UI.
+          $results = Invoke-ScriptAnalyzer -Path . -Recurse -Severity Warning,Error -ExcludeRule PSAvoidUsingWriteHost
           $results | Format-Table -AutoSize
           if ($results) { throw 'PSScriptAnalyzer reported findings.' }
 

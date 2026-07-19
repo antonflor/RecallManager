@@ -128,7 +128,9 @@ docs/                              Architecture, profiles, screenshots, testing,
 
 ## Future public website
 
-The public project website will eventually live at **`recall-manager.net`** in a separate repository that remains private until launch readiness. RecallManager itself remains free, open source, community-first, and ad-free. Website implementation and monetization are not part of this application repository.
+A public project website is planned for **`recall-manager.net`**, but website implementation is deliberately deferred until the application has been tested and is ready for launch. Its code will live in a separate repository that remains private during development.
+
+RecallManager remains free, open source, community-first, and ad-free. Advertising, monetization, paid tiers, accounts, and website implementation are not part of this application repository or the current v1 beta.
 
 See [Future website handoff](docs/future-website-handoff.md) for the preserved product direction, repository boundary, sitemap, launch gate, and later cleanup plan.
 

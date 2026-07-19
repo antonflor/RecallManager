@@ -1,0 +1,47 @@
+{
+  "schemaVersion": 1,
+  "profiles": {
+    "AuditOnly": {
+      "description": "Inspect and report the effective Recall state without changing the computer.",
+      "featureAction": "None",
+      "machinePolicies": {},
+      "userPolicies": {},
+      "destructive": false
+    },
+    "UserControlled": {
+      "description": "Remove RecallManager-created policy overrides and return supported choices to Windows and the signed-in user.",
+      "featureAction": "None",
+      "machinePolicies": {
+        "AllowRecallEnablement": null,
+        "DisableAIDataAnalysis": null
+      },
+      "userPolicies": {
+        "DisableAIDataAnalysis": null
+      },
+      "destructive": false
+    },
+    "SnapshotsOff": {
+      "description": "Keep the Recall component available while policy-blocking snapshot saving for the device and current user.",
+      "featureAction": "None",
+      "machinePolicies": {
+        "DisableAIDataAnalysis": 1
+      },
+      "userPolicies": {
+        "DisableAIDataAnalysis": 1
+      },
+      "destructive": true
+    },
+    "PrivacyHardened": {
+      "description": "Block Recall availability, block snapshot saving, and disable/remove the optional component.",
+      "featureAction": "DisableRemove",
+      "machinePolicies": {
+        "AllowRecallEnablement": 0,
+        "DisableAIDataAnalysis": 1
+      },
+      "userPolicies": {
+        "DisableAIDataAnalysis": 1
+      },
+      "destructive": true
+    }
+  }
+}

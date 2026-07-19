@@ -1,88 +1,98 @@
 <#
 .SYNOPSIS
-    Check, enable, or disable the Windows Recall feature using DISM.
+    Command-line entry point for RecallManager.
 
 .DESCRIPTION
-    Queries the current state of the "Recall" optional feature and prompts the
-    user to enable or disable it. Requires Administrator privileges (DISM).
-    A restart may be required for changes to take effect.
-
-.NOTES
-    Author : Tony Flores (https://github.com/antonflor)
-    License: MIT
+    Audits, explains, plans, applies, verifies, and rolls back supported
+    Windows Recall configuration. Run elevated for changes; audit commands can
+    run without elevation.
 #>
+[CmdletBinding()]
+param(
+    [ValidateSet('Interactive', 'Status', 'Audit', 'Plan', 'Apply', 'Restore', 'Export')]
+    [string]$Command = 'Interactive',
 
-# Query the current state of the Recall feature.
-# Returns $true (enabled), $false (disabled), or $null (unknown/unavailable).
-function Get-RecallStatus {
-    $featureInfo = dism /Online /Get-FeatureInfo /FeatureName:Recall /English
-    if ($LASTEXITCODE -ne 0) {
-        Write-Host "Unable to query the Recall feature (DISM exit code $LASTEXITCODE)."
-        Write-Host "Recall may not be available on this edition or build of Windows."
-        return $null
+    [ValidateSet('AuditOnly', 'UserControlled', 'SnapshotsOff', 'PrivacyHardened')]
+    [string]$Profile = 'AuditOnly',
+
+    [ValidateSet('Text', 'Json')]
+    [string]$Format = 'Text',
+
+    [string]$OutputPath,
+    [string]$BackupPath,
+    [switch]$Yes,
+    [switch]$Preview
+)
+
+Set-StrictMode -Version 2.0
+$ErrorActionPreference = 'Stop'
+
+$modulePath = Join-Path $PSScriptRoot 'src\RecallManager\RecallManager.psd1'
+Import-Module $modulePath -Force
+
+function Write-RecallObject {
+    param([Parameter(Mandatory = $true)]$InputObject)
+
+    if ($Format -eq 'Json') {
+        $InputObject | ConvertTo-Json -Depth 8
     }
-
-    if ($featureInfo -match 'State : Enable') {
-        Write-Host "Recall is currently ENABLED."
-        return $true
-    } elseif ($featureInfo -match 'State : Disable') {
-        Write-Host "Recall is currently DISABLED."
-        return $false
+    else {
+        $InputObject | Format-List
     }
-
-    Write-Host "Unable to determine the status of Recall."
-    return $null
 }
 
-# Report the result of a DISM enable/disable operation based on its exit code.
-function Show-DismResult {
-    param([string]$Action)
+function Invoke-InteractiveMenu {
+    Write-Host ''
+    Write-Host 'RecallManager' -ForegroundColor Cyan
+    Write-Host 'Audit, explain, and control Windows Recall.'
+    Write-Host ''
+    Write-Host '[1] Show status'
+    Write-Host '[2] Run privacy audit'
+    Write-Host '[3] Preview SnapshotsOff plan'
+    Write-Host '[4] Preview PrivacyHardened plan'
+    Write-Host '[5] Apply SnapshotsOff profile'
+    Write-Host '[6] Apply PrivacyHardened profile'
+    Write-Host '[7] Restore latest backup'
+    Write-Host '[Q] Quit'
 
-    switch ($LASTEXITCODE) {
-        0       { Write-Host "Recall has been successfully $Action." }
-        3010    { Write-Host "Recall has been $Action. A RESTART is required to complete the change." }
-        default { Write-Host "Failed to $($Action -replace 'd$','') Recall (DISM exit code $LASTEXITCODE)." }
+    $selection = Read-Host 'Choose an action'
+    switch ($selection.ToUpperInvariant()) {
+        '1' { Write-RecallObject (Get-RecallStatus) }
+        '2' { Write-RecallObject (Get-RecallAudit) }
+        '3' { Write-RecallObject (Get-RecallPlan -Profile SnapshotsOff) }
+        '4' { Write-RecallObject (Get-RecallPlan -Profile PrivacyHardened) }
+        '5' { Set-RecallProfile -Profile SnapshotsOff }
+        '6' { Set-RecallProfile -Profile PrivacyHardened }
+        '7' { Restore-RecallConfiguration -BackupPath $BackupPath }
+        'Q' { return }
+        default { Write-Warning 'Unknown selection.' }
     }
 }
 
-function Disable-Recall {
-    Write-Host "Disabling Recall..."
-    dism /Online /Disable-Feature /FeatureName:Recall /NoRestart
-    Show-DismResult -Action 'disabled'
-}
-
-function Enable-Recall {
-    Write-Host "Enabling Recall..."
-    dism /Online /Enable-Feature /FeatureName:Recall /NoRestart
-    Show-DismResult -Action 'enabled'
-}
-
-# --- Main ---
-
-# DISM requires an elevated session.
-$identity = [Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()
-if (-not $identity.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
-    Write-Warning "This script requires running as Administrator!"
-    Pause
-    exit 1
-}
-
-$status = Get-RecallStatus
-
-if ($status -eq $true) {
-    $response = Read-Host "Recall is enabled. Do you want to disable it? (Y/N)"
-    if ($response -eq 'Y') {
-        Disable-Recall
-    } else {
-        Write-Host "No changes made."
+try {
+    switch ($Command) {
+        'Interactive' { Invoke-InteractiveMenu }
+        'Status' { Write-RecallObject (Get-RecallStatus) }
+        'Audit' { Write-RecallObject (Get-RecallAudit) }
+        'Plan' { Write-RecallObject (Get-RecallPlan -Profile $Profile) }
+        'Apply' {
+            $confirmPreference = -not $Yes.IsPresent
+            Set-RecallProfile -Profile $Profile -Confirm:$confirmPreference -WhatIf:$Preview
+        }
+        'Restore' {
+            $confirmPreference = -not $Yes.IsPresent
+            Restore-RecallConfiguration -BackupPath $BackupPath -Confirm:$confirmPreference -WhatIf:$Preview
+        }
+        'Export' {
+            if ([string]::IsNullOrWhiteSpace($OutputPath)) {
+                $OutputPath = Join-Path (Get-Location) ('RecallManager-Audit-{0}.json' -f (Get-Date -Format 'yyyyMMdd-HHmmss'))
+            }
+            Export-RecallReport -Path $OutputPath
+            Write-Host "Audit report written to $OutputPath"
+        }
     }
-} elseif ($status -eq $false) {
-    $response = Read-Host "Recall is disabled. Do you want to enable it? (Y/N)"
-    if ($response -eq 'Y') {
-        Enable-Recall
-    } else {
-        Write-Host "No changes made."
-    }
-} else {
+}
+catch {
+    Write-Error $_
     exit 1
 }

@@ -1,7 +1,6 @@
 Set-StrictMode -Version 2.0
 $ErrorActionPreference = 'Stop'
 
-$script:ModuleRoot = $PSScriptRoot
 $script:RepositoryRoot = Split-Path (Split-Path $PSScriptRoot -Parent) -Parent
 $script:ProfilePath = Join-Path $script:RepositoryRoot 'config\profiles.json'
 $script:PolicyMachinePath = 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsAI'

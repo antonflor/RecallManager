@@ -122,9 +122,15 @@ src/RecallManager/                 PowerShell module
   Public/                          Supported commands
   Private/                         Detection, policy, feature, and backup logic
 tests/                             Pester tests
-docs/                              Architecture, profiles, screenshots, launch plan
+docs/                              Architecture, profiles, screenshots, testing, and future-site handoff
 .github/workflows/test.yml         Windows validation pipeline
 ```
+
+## Future public website
+
+The public project website will eventually live at **`recall-manager.net`** in a separate repository that remains private until launch readiness. RecallManager itself remains free, open source, community-first, and ad-free. Website implementation and monetization are not part of this application repository.
+
+See [Future website handoff](docs/future-website-handoff.md) for the preserved product direction, repository boundary, sitemap, launch gate, and later cleanup plan.
 
 ## Documentation
 
@@ -133,7 +139,7 @@ docs/                              Architecture, profiles, screenshots, launch p
 - [Screenshot Capture Guide](docs/screenshots.md)
 - [Testing and launch checklist](docs/testing.md)
 - [Windows policy reference](docs/windows-policy-reference.md)
-- [Website and product launch brief](docs/website-launch.md)
+- [Future recall-manager.net website handoff](docs/future-website-handoff.md)
 - [Contributing](CONTRIBUTING.md)
 - [Security policy](SECURITY.md)
 

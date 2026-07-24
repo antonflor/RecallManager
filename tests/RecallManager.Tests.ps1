@@ -1,3 +1,9 @@
+# Imported at file scope so the module is loaded during Pester's discovery phase,
+# which is required for the top-level InModuleScope block further down. BeforeAll
+# re-imports it for the run phase.
+$modulePath = Join-Path $PSScriptRoot '..\src\RecallManager\RecallManager.psd1'
+Import-Module $modulePath -Force
+
 BeforeAll {
     $modulePath = Join-Path $PSScriptRoot '..\src\RecallManager\RecallManager.psd1'
     Import-Module $modulePath -Force

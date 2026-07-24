@@ -2,8 +2,8 @@ function Get-RecallWindowsInfo {
     [CmdletBinding()]
     param()
 
-    $isWindows = $env:OS -eq 'Windows_NT'
-    if (-not $isWindows) {
+    $isWindowsOs = $env:OS -eq 'Windows_NT'
+    if (-not $isWindowsOs) {
         return [pscustomobject]@{
             IsWindows       = $false
             ProductName     = $null

@@ -1,0 +1,52 @@
+name: Package RecallManager release
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Version without the v prefix
+        required: true
+        default: 1.0.0-beta.1
+
+permissions:
+  contents: write
+
+jobs:
+  package:
+    runs-on: windows-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Resolve version
+        id: version
+        shell: pwsh
+        run: |
+          if ('${{ github.event_name }}' -eq 'workflow_dispatch') {
+            $version = '${{ inputs.version }}'
+          }
+          else {
+            $version = '${{ github.ref_name }}'.TrimStart('v')
+          }
+          "version=$version" >> $env:GITHUB_OUTPUT
+
+      - name: Build ZIP and checksum
+        shell: powershell
+        run: .\build\Package-Release.ps1 -Version '${{ steps.version.outputs.version }}'
+
+      - name: Upload package artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: RecallManager-${{ steps.version.outputs.version }}
+          path: dist/*
+
+      - name: Attach files to GitHub release
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          prerelease: ${{ contains(github.ref_name, 'beta') || contains(github.ref_name, 'rc') }}
+          files: dist/*
+          generate_release_notes: true

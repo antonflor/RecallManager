@@ -1,0 +1,9 @@
+*.log
+*.tmp
+*.bak
+TestResults/
+coverage/
+.vscode/
+.idea/
+RecallManager-Audit-*.json
+recall-backup-*.json

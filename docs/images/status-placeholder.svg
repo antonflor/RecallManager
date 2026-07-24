@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900" role="img" aria-labelledby="title desc">
+  <title id="title">STATUS SCREENSHOT</title><desc id="desc">Screenshot placeholder for RecallManager documentation.</desc>
+  <rect width="1600" height="900" fill="#0b1220"/><rect x="60" y="60" width="1480" height="780" rx="20" fill="#111827" stroke="#334155" stroke-width="4"/>
+  <rect x="60" y="60" width="1480" height="72" rx="20" fill="#172033"/><circle cx="108" cy="96" r="10" fill="#ef4444"/><circle cx="140" cy="96" r="10" fill="#f59e0b"/><circle cx="172" cy="96" r="10" fill="#22c55e"/>
+  <text x="800" y="390" text-anchor="middle" fill="#67e8f9" font-family="Segoe UI, Arial, sans-serif" font-size="52" font-weight="700">STATUS SCREENSHOT</text>
+  <text x="800" y="470" text-anchor="middle" fill="#cbd5e1" font-family="Segoe UI, Arial, sans-serif" font-size="30">Replace with: status.png</text>
+  <rect x="260" y="545" width="1080" height="96" rx="12" fill="#020617" stroke="#334155" stroke-width="2"/><text x="800" y="605" text-anchor="middle" fill="#e2e8f0" font-family="Cascadia Mono, Consolas, monospace" font-size="25">Capture: .\RecallManager.ps1 -Command Status</text>
+  <text x="800" y="735" text-anchor="middle" fill="#94a3b8" font-family="Segoe UI, Arial, sans-serif" font-size="24">Redact usernames, device names, domains, URLs, and paths before publishing.</text>
+</svg>

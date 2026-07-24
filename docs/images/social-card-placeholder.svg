@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-labelledby="title desc">
+  <title id="title">RecallManager social card placeholder</title><desc id="desc">A launch asset placeholder for RecallManager.</desc>
+  <defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#07111f"/><stop offset="1" stop-color="#172554"/></linearGradient></defs>
+  <rect width="1200" height="630" fill="url(#g)"/><rect x="70" y="70" width="1060" height="490" rx="28" fill="#0f172a" stroke="#22d3ee" stroke-width="3"/>
+  <text x="110" y="235" fill="#67e8f9" font-family="Segoe UI, Arial, sans-serif" font-size="72" font-weight="700">RecallManager</text>
+  <text x="110" y="325" fill="#f8fafc" font-family="Segoe UI, Arial, sans-serif" font-size="38">Know what Windows Recall is actually doing.</text>
+  <text x="110" y="405" fill="#cbd5e1" font-family="Segoe UI, Arial, sans-serif" font-size="28">Audit • Explain • Harden • Verify • Restore</text>
+  <text x="110" y="505" fill="#f59e0b" font-family="Cascadia Mono, Consolas, monospace" font-size="24">v1.0 beta launch asset — replace before publishing</text>
+</svg>
